@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract GothamMixer01 {
-    uint256 public constant DEPOSIT_AMOUNT = 0.1 ether;
+    uint256 public constant DEPOSIT_AMOUNT = 1 ether;
     uint256 public constant FEE_PERCENT = 1;
     uint256 public constant EXPIRY_TIME = 365 days;
 
