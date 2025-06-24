@@ -27,7 +27,7 @@ contract GothamMixer01 {
     function deposit(bytes32 commitment) external payable {
         uint256 requiredAmount = DEPOSIT_AMOUNT;
         if (feesEnabled) {
-            // If the fees are activated, the depositor must pay DEPOSIT_AMOUNT + 1%
+            // Si les frais sont activés, le déposant doit payer DEPOSIT_AMOUNT + 1%
             requiredAmount = (DEPOSIT_AMOUNT * 100) / (100 - FEE_PERCENT);
         }
 
@@ -63,8 +63,7 @@ contract GothamMixer01 {
         emit Withdrawn(recipient, nullifierHash);
     }
 
-    /// @notice Reclaims deposits older than EXPIRY_TIME. Only callable by the owner.
-    /// Does NOT affect active or recent deposits. Emits events for transparency.
+    /// @notice Reclaim expired deposits if no withdrawal was made within 1 year for that deposit
     function reclaimExpired() external {
         require(msg.sender == owner, "Not owner");
 
@@ -87,8 +86,7 @@ contract GothamMixer01 {
         }
     }
 
-    /// @notice Reclaims deposits in batch (specific range) older than EXPIRY_TIME. Only callable by the owner.
-    /// Does NOT affect active or recent deposits. Emits events for transparency.
+    /// @notice Reclaim expired deposits in batch from index `start` to `end` (excluded)
     function reclaimExpiredBatch(uint256 start, uint256 end) external {
         require(msg.sender == owner, "Not owner");
         require(start < end && end <= commitmentList.length, "Invalid range");
@@ -113,12 +111,6 @@ contract GothamMixer01 {
         }
     }
 
-    /// @notice Check if a commitment has expired (not withdrawn and older than EXPIRY_TIME)
-    function isExpired(bytes32 commitment) external view returns (bool) {
-        if (!commitments[commitment]) return false;
-        return block.timestamp > commitmentTimestamps[commitment] + EXPIRY_TIME;
-    }
-
     /// @notice Allows contract owner to change the owner address
     function changeOwner(address newOwner) external {
         require(msg.sender == owner, "Not owner");
@@ -136,14 +128,6 @@ contract GothamMixer01 {
         return commitmentList.length;
     }
 
-    /// Rejects plain BNB transfers (without using the deposit function)
-    receive() external payable {
-        revert("Direct BNB not accepted");
-    }
-
-    /// Rejects unknown function calls
-    fallback() external {
-        revert("Direct access not allowed");
-    }
-
+    /// @notice Allows contract to receive Ether
+    receive() external payable {}
 }
