@@ -13,7 +13,7 @@ contract GothamMixer01 {
     mapping(bytes32 => uint256) public commitmentTimestamps;
     bytes32[] public commitmentList;
 
-    bool public feesEnabled = false; // deposits/withdrawals are free during the first months
+    bool public feesEnabled = false; // deposits/withdrawals are free the first month
 
     event Deposited(bytes32 indexed commitment, uint256 timestamp);
     event Withdrawn(address indexed to, bytes32 indexed nullifierHash);
